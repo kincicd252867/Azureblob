@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure Blob Downloader</title>
+    <style>
+        :root {
+            --primary: #0078d4;
+            --primary-dark: #106ebe;
+            --background: #f5f5f5;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --text-light: #666666;
+            --border: #dddddd;
+            --success: #107c10;
+            --error: #d13438;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .subtitle {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+        
+        .container {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .instructions {
+            flex: 1;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+        
+        .instructions h2 {
+            margin-bottom: 15px;
+            color: var(--primary);
+            font-size: 1.4rem;
+        }
+        
+        .instructions ol {
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+        }
+        
+        .instructions p {
+            margin-bottom: 15px;
+        }
+        
+        .download-section {
+            flex: 1;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+        
+        .download-section h2 {
+            margin-bottom: 20px;
+            color: var(--primary);
+            font-size: 1.4rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2);
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        button:disabled {
+            background-color: #a0a0a0;
+            cursor: not-allowed;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+            display: none;
+        }
+        
+        .status.loading {
+            display: block;
+            background-color: #e1f0fa;
+            color: var(--primary);
+        }
+        
+        .status.success {
+            display: block;
+            background-color: #dff6dd;
+            color: var(--success);
+        }
+        
+        .status.error {
+            display: block;
+            background-color: #fde7e9;
+            color: var(--error);
+        }
+        
+        .spinner {
+            border: 3px solid rgba(0, 120, 212, 0.3);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Azure Blob Storage Downloader</h1>
+        <p class="subtitle">Download files from your Azure Blob Storage container</p>
+    </header>
+    
+    <div class="container">
+        <section class="instructions">
+            <h2>How to Use This Downloader</h2>
+            <ol>
+                <li>Enter the name of the file you want to download from the Azure Blob container.</li>
+                <li>Click the "Download File" button to start the download process.</li>
+                <li>The file will be downloaded directly to your device.</li>
+                <li>You'll receive a success message when the download completes.</li>
+            </ol>
+            <p>This downloader uses Azure Blob Storage REST API with the SAS token provided in the code. The SAS token grants read access to the "Videos" container.</p>
+            <p><strong>Note:</strong> The SAS token in this example has an IP restriction and expiration date. Make sure you're accessing from the allowed IP address and within the token validity period.</p>
+        </section>
+        
+        <section class="download-section">
+            <h2>Download a File</h2>
+            <div class="form-group">
+                <label for="blobName">Enter File Name:</label>
+                <input type="text" id="blobName" placeholder="e.g., video.mp4, document.pdf, image.jpg">
+            </div>
+            
+            <button id="downloadBtn" onclick="downloadFile()">Download File</button>
+            
+            <div id="status" class="status"></div>
+        </section>
+    </div>
+    
+    <footer>
+        <p>Azure Blob Storage Downloader | Uses Azure REST API with SAS Token Authentication</p>
+    </footer>
+    
+    <script>
+        // Base SAS URL for the Azure Blob container (with read permissions)
+        const baseSasUrl = "https://eablobuser.blob.core.windows.net/container01/Videos";
+        const sasToken = "?sp=racwl&st=2025-06-01T22:43:07Z&se=2025-06-04T06:43:07Z&sip=180.94.149.217&spr=https&sv=2024-11-04&sr=d&sig=UFKFh3iKdL5n%2Besv1ITiTTNf%2F%2BkoPTfnugS7pLIQ%2FwA%3D&sdd=1";
+        
+        async function downloadFile() {
+            const blobNameInput = document.getElementById('blobName');
+            const blobName = blobNameInput.value.trim();
+            const statusDiv = document.getElementById('status');
+            const downloadBtn = document.getElementById('downloadBtn');
+            
+            if (!blobName) {
+                showStatus('Please enter a file name to download', 'error');
+                return;
+            }
+            
+            // Show loading status
+            showStatus('Connecting to Azure Blob Storage...', 'loading');
+            
+            try {
+                // Encode blob name for URL
+                const encodedBlobName = encodeURIComponent(blobName);
+                const downloadUrl = `${baseSasUrl}/${encodedBlobName}${sasToken}`;
+                
+                // Fetch the blob
+                const response = await fetch(downloadUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to download file: ${response.status} ${response.statusText}`);
+                }
+                
+                const blob = await response.blob();
+                
+                // Create a temporary URL and trigger download
+                const objectUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = objectUrl;
+                a.download = blobName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                // Clean up the object URL
+                setTimeout(() => URL.revokeObjectURL(objectUrl), 100);
+                
+                showStatus(`Success! ${blobName} has been downloaded.`, 'success');
+            } catch (error) {
+                console.error('Download error:', error);
+                showStatus(`Error: ${error.message}`, 'error');
+            }
+        }
+        
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = 'status';
+            
+            if (type === 'loading') {
+                statusDiv.innerHTML = `<div class="spinner"></div>${message}`;
+                statusDiv.classList.add('loading');
+            } else if (type === 'success') {
+                statusDiv.classList.add('success');
+            } else if (type === 'error') {
+                statusDiv.classList.add('error');
+            }
+        }
+    </script>
+</body>
+</html>

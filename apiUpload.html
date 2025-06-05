@@ -1,0 +1,15 @@
+<input type="file" id="uploader">
+<button onclick="uploadFile()">Submit</button>
+
+<script>
+async function uploadFile() {
+  const file = document.getElementById('uploader').files[0];
+  const sasUrl = "https://eablobuser.blob.core.windows.net/container01/Videos?sp=racwl&st=2025-06-01T22:43:07Z&se=2025-06-04T06:43:07Z&sip=180.94.149.217&spr=https&sv=2024-11-04&sr=d&sig=UFKFh3iKdL5n%2Besv1ITiTTNf%2F%2BkoPTfnugS7pLIQ%2FwA%3D&sdd=1https://eablobuser.blob.core.windows.net/container01/Videos?sp=racwl&st=2025-06-01T22:43:07Z&se=2025-06-04T06:43:07Z&sip=180.94.149.217&spr=https&sv=2024-11-04&sr=d&sig=UFKFh3iKdL5n%2Besv1ITiTTNf%2F%2BkoPTfnugS7pLIQ%2FwA%3D&sdd=1";
+  
+  await fetch(sasUrl, {
+    method: 'PUT',
+    body: file,
+    headers: { 'x-ms-blob-type': 'BlockBlob' }
+  });
+}
+</script>
