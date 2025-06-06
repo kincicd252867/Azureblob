@@ -25,7 +25,7 @@ if (Test-Path -Path $LocalDownloadDir) {
         Write-Output "Download directory created"
 }
 
-#Get blob objects
+#Get objects in the blob container
 foreach ($file in $Blobfiles) {
     $LocalDownloadPath = Join-Path -Path $LocalDownloadDir -ChildPath $Blobfiles
     $storageURI = "$($httpsStorageHost)/$($Container)/$($BlobName)$($SASToken)"
