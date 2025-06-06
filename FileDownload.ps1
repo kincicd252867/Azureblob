@@ -26,7 +26,7 @@ if (Test-Path -Path $LocalDownloadDir) {
 }
 
 #Get blob objects
-foreach($file in $Blobfiles) {
+foreach ($file in $Blobfiles) {
     $LocalDownloadPath = Join-Path -Path $LocalDownloadDir -ChildPath $Blobfiles
     $storageURI = "$($httpsStorageHost)/$($Container)/$($BlobName)$($SASToken)"
 
